@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connection from "./config/db.js";
 import user from "./routes/user.routes.js";
+import post from "./routes/post.routes.js";
+import analytics from "./routes/analytics.routes.js";
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -15,7 +17,9 @@ let app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use("/user", user);
+app.use("/api/users", user);
+app.use("/api/posts", post);
+app.use("/api/analytics", analytics);
 
 app.get("/api", (req,res)=>{
     try{
@@ -25,6 +29,7 @@ app.get("/api", (req,res)=>{
         res.send({message: e.message});
     }
 })
+
 
 let port = process.env.port || 8000;
 

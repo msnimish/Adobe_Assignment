@@ -18,7 +18,7 @@ export const login = async(req,res) =>{
             if(!isMatch){
                 return res.status(200).send({message:`Incorrect Password!`, status:"warning"});
             }
-            let token = jwt.sign({_id:user._id, email: user.email},process.env.JWT_SECRET);
+            let token = jwt.sign({user_id:user._id, email: user.email},process.env.JWT_SECRET);
             return res.status(200).send({token:`Bearer ${token}`, message: "Login Successful!", status:"success"});
         }
         
@@ -31,22 +31,26 @@ export const login = async(req,res) =>{
 
 export const register = async (req,res) => {
     try{
-        const {email,password} = req.body;
+        const {name, email ,password, bio, isAdmin} = req.body;
         console.log(req.body);
+        
         let user = await User.find({email});
         if(user._id){
             return res.status(200).send({message: "User already exists! Please try to login", status:"info"})
         }
         const newUser = new User({
+            name,
             email,
-            password
+            password, 
+            bio, 
+            isAdmin
         });
         
         const salt = await bcrypt.genSalt(10);
         console.log(password,salt);
         newUser.password = await bcrypt.hash(password,salt);
         await newUser.save();
-        return res.status(200).send({message:"Registered Successfully", data:newUser, status:"success"});
+        return res.status(200).send({message:"Registered Successfully", details:newUser, status:"success"});
     }catch(err){
         console.log(err);
         return res.status(500).send({message: "Something went wrong during Signup", status:"error"});
@@ -55,9 +59,12 @@ export const register = async (req,res) => {
 
 export const getUser = async ( req,res )=>{
     try{
-        let token = req.headers.authorization.split(' ')[1];
-        let decode = jwt.verify(token, process.env.JWT_SECRET);
-        res.status(200).send({user:decode});
+        let {id} = req.params;
+        let user = await User.findById(id);
+        if(!user._id){
+            res.status(200).send({message:"User not found!", status:"error"});
+        }
+        res.status(200).send({details:user, message: "Successfully retrieved user data", status:"success"});
     }
     catch(err){
         console.log(err);
@@ -65,12 +72,42 @@ export const getUser = async ( req,res )=>{
     }
 }
 
-export const getBannedUser = async ( req,res )=>{
+export const updateUser = async ( req,res )=>{
     try{
-        let users = await User.find({blockedTill:{$ne:null}}).sort({blockedTill:1}).limit(3);
+        let {id} = req.params;
+        let data = req.body;
+        let user = await User.findById(id);
+        if(!user._id){
+            res.status(200).send({message:"User not found!", status:"error"});
+        }
+        if(data.name && data.bio){
+            user.name = data.name;
+            user.bio = data.bio;
+        }else if(data.name){
+            user.name = data.name;
+        }else if(data.bio){
+            user.bio = data.bio;
+        }
+        await user.save();
+        res.status(200).send({details:user, message:"Successfully Updated!", status:"success"});
     }
     catch(err){
         console.log(err);
-        return res.status(500).send({message: "Something went wrong while fetching user details", status:"error"});
+        return res.status(500).send({message: "Something went wrong while updating user data", status:"error"});
+    }
+}
+
+export const deleteUser = async ( req,res )=>{
+    try{
+        let {id} = req.params;
+        let user = await User.findByIdAndDelete(id);
+        if(!user._id){
+            res.status(200).send({message:"User not found!", status:"error"});
+        }
+        res.status(200).send({message:"Successfully Deleted!", status:"success"});
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).send({message: "Something went wrong while updating user data", status:"error"});
     }
 }

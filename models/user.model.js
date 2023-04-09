@@ -20,6 +20,10 @@ let UserSchema = mongoose.Schema({
         type: String,
         minlength: 0,
         maxlenght: 200
+    },
+    isAdmin:{
+        type: Boolean,
+        default:false
     }
 },{timestamp: true});
 
