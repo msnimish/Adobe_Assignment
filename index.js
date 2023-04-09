@@ -26,7 +26,7 @@ app.get("/api", (req,res)=>{
     }
 })
 
-let port = process.env.port || 3000;
+let port = process.env.port || 8000;
 
 //serving the client-side code
 app.use(express.static(path.join(__dirname,"./client-side/dist")));

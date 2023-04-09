@@ -8,7 +8,8 @@ function App() {
   const [text, setText] = useState("No Message");
 
   const fetchData = async() =>{ 
-    let res = await axios.get(`/api`);
+    let res = await axios.get(`${backend_url}/api`);
+    console.log(res.url);
     setText(res.data);
   }
 
