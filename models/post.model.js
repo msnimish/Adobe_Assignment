@@ -24,7 +24,7 @@ let PostSchema = mongoose.Schema({
         type: [mongoose.Types.ObjectId],
         default: []
     }
-},{timestamp: true});
+},{timestamps: true});
 
 
 let Post = mongoose.model("post", PostSchema);

@@ -52,10 +52,14 @@ export let deletePost = async (req,res)=>{
 
 export let incrementLike = async (req,res)=>{
     try{
-        const {user_id} = req.body;
+        // const {user_id} = req.body;
+        // console.log(req.headers);
+        let token = req.headers.authorization.split(' ')[1];
+        let decode = jwt.verify(token, process.env.JWT_SECRET);
+        let user_id = decode.user_id;
         const {id} = req.params;
         let post = await Post.findById(id);
-        if(post.usersDisliked.includes(user_id)){
+        if(post.usersDisliked.includes(user_id) && !post.usersLiked.includes(user_id)){
             post.usersDisliked=post.usersDisliked.filter(userId=>userId===user_id);
             post.likes+=2;
         }else{
@@ -72,11 +76,14 @@ export let incrementLike = async (req,res)=>{
 
 export let decrementLike = async (req,res)=>{
     try{
-        const {user_id} = req.body;
+        // const {user_id} = req.body;
+        let token = req.headers.authorization.split(' ')[1];
+        let decode = jwt.verify(token, process.env.JWT_SECRET);
+        let user_id = decode.user_id;
         const {id} = req.params;
         let post = await Post.findById(id);
         if(post.likes>0){
-            if(post.usersLiked.includes(user_id)){
+            if(post.usersLiked.includes(user_id) && !post.usersDisliked.includes(user_id)){
                 post.usersLiked=post.usersLiked.filter(userId=>userId===user_id);
                 post.likes-=2;
                 if(post.likes<0){
@@ -92,5 +99,16 @@ export let decrementLike = async (req,res)=>{
     }catch(err){
         console.log(err);
         return res.status(500).send({message: "Something went wrong during decrementing post likes", status:"error"});
+    }
+}
+
+export const getAllPosts = async(req,res)=>{
+    try{
+        let posts = await Post.find().populate("user_id").sort({createdAt:-1});
+        res.status(200).send({details: posts, message:"Successfully Fetched all posts!", status:"success"});
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).send({message: "Something went wrong while fetching all posts", status:"error"});
     }
 }
