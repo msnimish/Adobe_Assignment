@@ -112,3 +112,31 @@ export const getAllPosts = async(req,res)=>{
         return res.status(500).send({message: "Something went wrong while fetching all posts", status:"error"});
     }
 }
+
+export const getAllMyPosts = async(req,res)=>{
+    try{
+        let token = req.headers.authorization.split(' ')[1];
+        let decode = jwt.verify(token, process.env.JWT_SECRET);
+        let user_id = decode.user_id;
+        let posts = await Post.find({user_id:user_id}).populate("user_id").sort({createdAt:-1});
+        res.status(200).send({details: posts, message:"Successfully Fetched all my posts!", status:"success"});
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).send({message: "Something went wrong while fetching all my posts", status:"error"});
+    }
+}
+
+export const deleteMyPosts = async(req,res)=>{
+    try{
+        let token = req.headers.authorization.split(' ')[1];
+        let decode = jwt.verify(token, process.env.JWT_SECRET);
+        let user_id = decode.user_id;
+        let posts = await Post.deleteMany({user_id:user_id});
+        res.status(200).send({message:"Successfully deleted all users posts!", status:"success"});
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).send({message: "Something went wrong while deleting all my posts", status:"error"});
+    }
+}

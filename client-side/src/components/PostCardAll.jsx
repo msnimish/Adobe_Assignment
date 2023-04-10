@@ -1,22 +1,55 @@
-import { Avatar, Box, Button, Card, CardBody, CardFooter, Divider, Flex, Heading, Icon, Stack, Text } from '@chakra-ui/react'
+import { Avatar, Box, Button, Card, CardBody, CardFooter, Divider, Flex, Heading, Icon, Stack, Text, useDisclosure, useToast } from '@chakra-ui/react'
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { AiOutlineLike, AiOutlineDislike, AiFillDislike, AiFillLike  } from "react-icons/ai"
 import { backend_url } from '../main';
+import UpdateModal from './UpdateModal';
 
 const PostCardAll = ({data}) => {
     let [isLiked, setIsLiked] = useState(0);
     let [userId , setUserId] = useState("");
+    const toast = useToast();
     let [likes, setLikes] = useState(data.likes);
+    let {isOpen, onOpen, onClose} = useDisclosure();
     console.log("Hi");
     let token = localStorage.getItem("adobe-token");
 
-    const handleUpdate = async () => {
-
+    const handleUpdate = async ({content}) => {
+        try{
+            let res = await axios.put(`${backend_url}/posts/${data._id}`, {content}, {headers:{
+                authorization: token
+            }})
+            if(res.status ===200){
+                onClose();
+            }
+            toast({
+                position: "top",
+                title: res.data.message,
+                status: res.data.status,
+                duration: 9000,
+                isClosable: true,
+              });
+        }catch(err){
+            console.log(err);
+        }
     }
 
     const handleDelete = async () => {
-        
+        try{
+            let res = await axios.delete(`${backend_url}/posts/${data._id}`, {headers:{
+                authorization: token
+            }})
+            toast({
+                position: "top",
+                title: res.data.message,
+                status: res.data.status,
+                duration: 9000,
+                isClosable: true,
+              });
+            
+        }catch(err){
+            console.log(err);
+        }
     }
 
     const getUserId = async() => {
@@ -84,11 +117,12 @@ const PostCardAll = ({data}) => {
             </CardBody>
             <Divider w="90%"/>
             <CardFooter m="0px" p="3px" w="90%" display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-                <Flex justifyContent={"flex-end"}>
-                    <Button onClick={handleUpdate}>Edit</Button>
-                    <Button onClick={handleDelete}>Delete</Button>
+                <Flex justifyContent={"flex-end"} gap="10px">
+                    <Button onClick={onOpen} colorScheme='messenger'>Edit</Button>
+                    <UpdateModal isOpen={isOpen} onClose={onClose} handleUpdate={handleUpdate} oldPost={data.content}/>
+                    <Button onClick={handleDelete} colorScheme='red'>Delete</Button>
                 </Flex>
-                <Flex justifyContent={"flex-end"}>
+                <Flex justifyContent={"flex-end"} alignItems={"center"}>
                     <Text mr="5px">Likes: {likes}</Text>
                     <Flex justifyContent={"center"} alignItems={"center"} w="50px" h="50px">
                         <Button variant="ghost" onClick={handleLike}>

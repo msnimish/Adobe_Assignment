@@ -3,7 +3,6 @@ import Navbar from "../components/Navbar";
 import {
   Button,
   Flex,
-  Input,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -18,7 +17,8 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { backend_url } from "../main";
-import PostCard from "../components/PostCardAll";
+import PostCardAll from "../components/PostCardAll";
+import Notice from "../components/Notice";
 
 const MyPosts = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,9 +32,14 @@ const MyPosts = () => {
   
     const getData = async () => {
       try {
-        let res = await axios.get(`${backend_url}/posts/allPosts`);
+        let res = await axios.get(`${backend_url}/posts/allMyPosts`,{
+            headers:{
+                authorization:token
+            }
+        });
         // console.log(res.data);
         setPosts(res.data.details);
+        setIsAdmin(isAdmin);
       } catch (e) {
         console.log(e);
       }
@@ -79,6 +84,7 @@ const MyPosts = () => {
     
     return (
       <>
+        {isAdmin===false?<Notice/>:<></>} 
         <Navbar />
         <Flex w="40%" m="auto" gap="20px" mt="20px" justifyContent={"flex-end"}>
           <Button colorScheme="red" p="10px 30px" onClick={onOpen}>
@@ -116,7 +122,7 @@ const MyPosts = () => {
         </Flex>
         <Flex w="40%" m="auto" gap="20px" mt="20px" flexDirection={"column"}>
           {posts.map((post) => (
-            <PostCard key={post._id} data={post} />
+            <PostCardAll key={post._id} data={post} />
           ))}
         </Flex>
       </>

@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Analytics = () => {
-    const isAdmin = localStorage.getItem('adobe-isAdmin');
+    const [isAdmin,setIsAdmin] = useState(localStorage.getItem('adobe-isAdmin'));
   return (
     <div>Analytics</div>
   )

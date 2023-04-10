@@ -29,13 +29,14 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const token = localStorage.getItem("adobe-token");
   const initialRef = React.useRef(null);
-  const isAdmin = localStorage.getItem('adobe-isAdmin');
+  const [isAdmin,setIsAdmin] = useState(localStorage.getItem('adobe-isAdmin'));
 
   const getData = async () => {
     try {
       let res = await axios.get(`${backend_url}/posts/allPosts`);
       // console.log(res.data);
       setPosts(res.data.details);
+      setIsAdmin(isAdmin);
     } catch (e) {
       console.log(e);
     }

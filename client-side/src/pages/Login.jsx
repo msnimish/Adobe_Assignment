@@ -3,20 +3,30 @@ import {
     Heading,
     Button,
     useDisclosure,
-    Text
+    Text,
+    useToast
   } from "@chakra-ui/react";
-  import React from "react";
+  import React, { useEffect } from "react";
   import Form from "../components/Form";
   import { backend_url } from "../main";
   import { SideDrawer } from "../components/SideDrawer";
 
   
-  
   const Login = () => {
 
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-
+    const toast = useToast();
+    useEffect(()=>{
+        toast({
+            position: "top",
+            title: "Use Dummy Admin Credentials Mentioned below to access analytics page",
+            status: "info",
+            duration: 9000,
+            isClosable: true,
+        });
+    },[])
+    
 
     return (
       <Flex w="100vw" margin="0 auto" bg="red.200" h="100vh">

@@ -68,11 +68,11 @@ const PostCard = ({data}) => {
         variant='outline'
         w="100%"
     >
-        <Avatar name={data.user_id.name} bg='red.500' color="white" m="20px"/>
+        <Avatar name={data?.user_id?.name} bg='red.500' color="white" m="20px"/>
         <Stack w="100%">
             <CardBody>
-                <Text fontWeight={"700"} py='2'>{data.user_id.name}</Text>
-                <Text size='md'>{data.content}</Text>
+                <Text fontWeight={"700"} py='2'>{data?.user_id?.name}</Text>
+                <Text size='md'>{data?.content}</Text>
             </CardBody>
             <Divider w="90%"/>
             <CardFooter m="0px" p="3px" w="90%" display={"flex"} justifyContent={"flex-end"} alignItems={"center"}>

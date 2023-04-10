@@ -1,11 +1,9 @@
 import { Button, Flex, HStack, Heading, Image, Text } from '@chakra-ui/react'
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const isAdmin = localStorage.getItem('adobe-isAdmin');
-    console.log("isAdmin: "+isAdmin)
 
     const handleLogout = () => {
         localStorage.removeItem('adobe-token');
@@ -19,9 +17,7 @@ const Navbar = () => {
             <HStack spacing={10} color={"white"}>
                 <Text><Link to="/home">Home</Link></Text>
                 <Text><Link to="/myPosts">My Posts</Link></Text>
-                { isAdmin===true ?
-                <Text><Link to="/analytics">Analytics</Link></Text>:<></>
-                }
+                <Text><Link to="/analytics/users">Analytics</Link></Text>:<></>
                 <Text><Link to="/profile">Profile</Link></Text>
                 <Button colorScheme="blackAlpha" variant="solid" onClick={handleLogout} >Logout</Button>
             </HStack>
