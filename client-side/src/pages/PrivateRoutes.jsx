@@ -6,7 +6,7 @@ import { Outlet, Navigate} from "react-router-dom";
 const PrivateRoutes = () => {
     let isAdmin = localStorage.getItem('adobe-isAdmin');
     return (
-        isAdmin === true ? <Outlet/> : <Navigate to="/"></Navigate>
+        isAdmin == true ? <Outlet/> : <Navigate to="/"></Navigate>
     )
 }
 
